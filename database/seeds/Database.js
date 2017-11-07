@@ -13,11 +13,18 @@
 */
 
 // const Factory = use('Factory')
+const User = use('App/Model/User')
 
 class DatabaseSeeder {
 
   * run () {
-    // yield Factory.model('App/Model/User').create(5)
+
+    yield User.create({
+      email: 'admin@donlobo.com',
+      username: 'donlobo',
+      password: 'secret'
+    })
+
   }
 
 }
