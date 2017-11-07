@@ -18,3 +18,10 @@
 const Route = use('Route')
 
 Route.post('/login', 'UserController.login')
+
+/**
+ * Routing api donlobo v1
+ */
+Route.group('version1', function () {
+    Route.post('/customer', 'CustomerController.store')
+}).prefix('/api/v1')
