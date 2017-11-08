@@ -9,8 +9,10 @@ class CustomersTableSchema extends Schema {
       table.increments()
       table.string('full_name')
       table.string('phone')
-      table.string('card')
+      table.integer('card','255')
+      table.index('card')
       table.timestamps()
+      table.timestamp('deleted_at').nullable()
     })
   }
 
