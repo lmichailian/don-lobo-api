@@ -4,6 +4,14 @@ const Lucid = use('Lucid')
 
 class Customer extends Lucid {
 
+  /**
+   * Return delete timestamp
+   */
+  static get deleteTimestamp () {
+    return null
+  }
+
+
 /**
 * rules for login
 */

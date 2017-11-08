@@ -23,5 +23,10 @@ Route.post('/login', 'UserController.login')
  * Routing api donlobo v1
  */
 Route.group('version1', function () {
+    Route.get('/customers', 'CustomerController.index')
     Route.post('/customer', 'CustomerController.store')
-}).prefix('/api/v1')
+    Route.put('/customer/:id', 'CustomerController.update')
+    Route.delete('/customer/:id', 'CustomerController.delete')
+})
+.prefix('/api/v1')
+.middleware('authApi')
