@@ -12,7 +12,7 @@ class CustomersTableSchema extends Schema {
       table.integer('card','255')
       table.index('card')
       table.timestamps()
-      table.timestamp('deleted_at').nullable()
+      table.softDeletes()
     })
   }
 
