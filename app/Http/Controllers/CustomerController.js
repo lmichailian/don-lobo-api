@@ -2,7 +2,19 @@
 
 const Validator = use('Validator')
 const Customer = use('App/Model/Customer')
+
 class CustomerController {
+
+    /**
+     * Get all customers.
+     * 
+     * @param {*} request 
+     * @param {*} response 
+     */
+    * index (request, response) {
+        const customers = yield Customer.query().where({deleted_at: null}).fetch()
+        yield response.status(200).json({error: false, customers: customers})
+    }
 
     /**
      * Create a customer.
@@ -27,6 +39,50 @@ class CustomerController {
         } catch (e) {
             yield response.status(500).json({error: true, message: e.message})
         }
+    }
+
+    /**
+     * Update data customer.
+     * 
+     * @param {*} request 
+     * @param {*} response 
+     */
+    * update (request, response) {
+        const body = request.all()
+
+        try {
+            const customer = yield Customer.findByOrFail('id', request.param('id'))
+
+            customer.full_name = body.full_name
+            customer.phone = body.phone
+
+            if (body.card) {
+                customer.card = body.card
+            }
+                
+            yield customer.save()
+            yield response.status(200).json({error: false, customer: customer})
+
+        } catch (e) {
+            yield response.status(500).json({error: true, message: e.message})
+        }
+
+    }
+
+    /**
+     * Delete customer.
+     * 
+     * @param {*} request 
+     * @param {*} response 
+     */
+    * delete (request, response) {
+        try {
+            const customer = yield Customer.findByOrFail('id', request.param('id'))
+            yield customer.delete()
+            yield response.status(200).json({error: false, message: 'Delete custommer is successfully'})
+        } catch (e) {
+            yield response.status(500).json({error: true, message: e.message})
+        }    
     }
 
 }
