@@ -8,6 +8,7 @@ class CreditsTableSchema extends Schema {
     this.create('credits', (table) => {
       table.increments()
       table.decimal('amount')
+      table.boolean('expired').default(false)
       table.integer('customer_id').unsigned().references('id').inTable('customers')
       table.timestamps()
     })
