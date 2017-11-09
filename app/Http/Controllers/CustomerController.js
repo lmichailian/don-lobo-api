@@ -78,8 +78,7 @@ class CustomerController {
     * delete (request, response) {
         try {
             const customer = yield Customer.findByOrFail('id', request.param('id'))
-            customer.deleted_at = new Date()
-            yield customer.save()
+            yield customer.delete()
             yield response.status(200).json({error: false, message: 'Delete custommer is successfully'})
         } catch (e) {
             yield response.status(500).json({error: true, message: e.message})

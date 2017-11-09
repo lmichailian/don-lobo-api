@@ -8,7 +8,7 @@ class Customer extends Lucid {
    * Return delete timestamp
    */
   static get deleteTimestamp () {
-    return null
+    return 'deleted_at'
   }
 
 
