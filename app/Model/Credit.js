@@ -10,7 +10,7 @@ class Credit extends Lucid {
   static get createRules () {
     return {
       card: 'required',
-      amount: 'required',
+      amount:"required|regex:^(?=.)([+-]?([0-9]*)(\.([0-9]+))?)$",
     }
 }
 
@@ -21,7 +21,7 @@ static get messages () {
   return {
     'card.required' : 'El número de tarjeta debe ser requerido',
     'amount.required' : 'El monto de recarga es un campo requerido',
-    'amount.numeric' : 'El monto de recarga es un valor alfanumérico'
+    'amount.regex' : 'El monto de recarga es un valor numérico'
   }
 }
 
