@@ -1,12 +1,38 @@
 'use strict'
 
 const Validator = use('Validator')
+const Database = use('Database')
 const Customer = use('App/Model/Customer')
 const Credit  = use('App/Model/Credit')
 
 class CreditController {
 
     /**
+     * Show total credit for customer.
+     * 
+     * @param {*} request 
+     * @param {*} response 
+     */
+    * show (request, response) {
+
+        try {
+            const credit =  
+            yield Database.select('customers.id', 'customers.full_name', 'customers.phone')
+            .from('customers').sum('credits.amount as credits')
+            .innerJoin('credits', 'customers.id', 'credits.customer_id')
+            .where('credits.expired', false)
+            .where('customers.card', request.param('card'))
+
+            yield response.status(200).json({error: false, credit: credit[0]})
+
+        } catch (e) {
+            yield response.status(500).json({error: true, message: e.message})
+        }
+    
+    }
+
+    /**
+     * Crate a credit for user.
      * 
      * @param {*} request 
      * @param {*} response 
