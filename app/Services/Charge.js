@@ -40,8 +40,6 @@ Charge.deductService = function * (service, credits) {
  * @param {*} idCredit 
  */
 Charge.deduct = function * (amount, idCredit) {
-    console.log(amount)
-    console.log(idCredit)
     yield Database
     .table('credits')
     .where('id', idCredit)
