@@ -5,6 +5,16 @@ const Lucid = use('Lucid')
 class Customer extends Lucid {
 
   /**
+   * Credits for custommer.
+   */
+  credits () {
+    return this.hasMany('App/Model/Credit')
+    .where('expired', false)
+    .where('amount', '>', 0)
+    .orderBy('created_at', 'ASC')
+  }
+
+  /**
    * Return delete timestamp
    */
   static get deleteTimestamp () {
