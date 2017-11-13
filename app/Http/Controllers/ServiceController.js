@@ -21,6 +21,10 @@ class ServiceController {
     
             const credits = yield customer.credits().fetch()
     
+            if (credits.toJSON().length === 0) {
+                yield response.status(500).json({error: true, message: 'No se posee saldo disponible, realice una recarga'})
+            }
+
             const isSucces =  yield Charge.deductService(service, credits.toJSON())
     
             if (!isSucces) {
