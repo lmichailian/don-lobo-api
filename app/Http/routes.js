@@ -32,6 +32,8 @@ Route.group('version1', function () {
     //Credit routes
     Route.post('/credit', 'CreditController.store')
     Route.get('/credit/customer/:card', 'CreditController.show')
+
+    Route.post('/service/charge', 'ServiceController.store')
 })
 .prefix('/api/v1')
 .middleware('authApi')

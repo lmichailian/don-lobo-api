@@ -14,6 +14,7 @@
 
 // const Factory = use('Factory')
 const User = use('App/Model/User')
+const Service = use('App/Model/Service')
 
 class DatabaseSeeder {
 
@@ -23,6 +24,21 @@ class DatabaseSeeder {
       email: 'admin@donlobo.com',
       username: 'donlobo',
       password: 'secret'
+    })
+
+    yield Service.create({
+      'service': 'Pelo',
+      'cost': 200
+    })
+    
+    yield Service.create({
+      'service': 'Barba',
+      'cost': 150
+    })
+
+    yield Service.create({
+      'service': 'Pelo y Barba',
+      'cost': 300
     })
 
   }
