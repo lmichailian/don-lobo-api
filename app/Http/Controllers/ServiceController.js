@@ -15,20 +15,24 @@ class ServiceController {
      * @param {*} response 
      */
     * store (request, response) {
-        const customer = yield Customer.findByOrFail('card', request.input('card'))
-        const service = yield Service.findByOrFail('id', request.input('service'))
-
-        const credits = yield customer.credits().fetch()
-
-        const isSucces =  yield Charge.deductService(service, credits.toJSON())
-
-        if (!isSucces) {
-            yield response.status(500).json({error: true, message: 'No se pudo cobrar el servicio'})
+        try {
+            const customer = yield Customer.findByOrFail('card', request.input('card'))
+            const service = yield Service.findByOrFail('id', request.input('service'))
+    
+            const credits = yield customer.credits().fetch()
+    
+            const isSucces =  yield Charge.deductService(service, credits.toJSON())
+    
+            if (!isSucces) {
+                yield response.status(500).json({error: true, message: 'No se pudo cobrar el servicio'})
+            }
+    
+            yield Charge.transaction(service.cost, service.service, customer, service)
+    
+            yield response.status(200).json({error: false, message: 'El servicio se cobró'})
+        } catch (e) {
+            yield response.status(500).json({error: true, message: e.message})
         }
-
-        yield Charge.transaction(service.cost, service.service, customer, service)
-
-        yield response.status(200).json({error: false, message: 'El servicio se cobró'})
 
     }
 
