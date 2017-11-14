@@ -2,6 +2,7 @@
 
 const Validator = use('Validator')
 const Database = use('Database')
+const Charge = use('App/Services/Charge')
 const Customer = use('App/Model/Customer')
 const Credit  = use('App/Model/Credit')
 
@@ -52,6 +53,7 @@ class CreditController {
                 amount: request.input('amount'),
                 customer_id: customer.id
             })
+            yield Charge.transaction(credit.amount, 'Carga de saldo', customer)
             yield credit.save()
             yield response.status(201).json({error: false, credit: credit})
         } catch (e) {
