@@ -1,7 +1,8 @@
 'use strict'
 
 const Validator = use('Validator')
-const Customer = use('App/Model/Customer')
+const Database  = use('Database')
+const Customer  = use('App/Model/Customer')
 
 class CustomerController {
 
@@ -12,7 +13,12 @@ class CustomerController {
      * @param {*} response 
      */
     * index (request, response) {
-        const customers = yield Customer.query().where({deleted_at: null}).fetch()
+        const customers  = yield Database.select('customers.id', 'customers.full_name', 'customers.phone', 'customers.card')
+        .from('customers').sum('credits.amount as credits')
+        .innerJoin('credits', 'customers.id', 'credits.customer_id')
+        .whereNull('customers.deleted_at')
+        .where('credits.expired', false)
+        
         yield response.status(200).json({error: false, customers: customers})
     }
 
