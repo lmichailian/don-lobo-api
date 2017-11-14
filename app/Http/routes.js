@@ -33,7 +33,12 @@ Route.group('version1', function () {
     Route.post('/credit', 'CreditController.store')
     Route.get('/credit/customer/:card', 'CreditController.show')
 
+    //Charge Service routes
     Route.post('/service/charge', 'ServiceController.store')
+
+    //Transaction routes
+    Route.get('/transactions', 'TransactionController.index')
+    Route.get('/transaction/customer/:id', 'TransactionController.show')
 })
 .prefix('/api/v1')
 .middleware('authApi')
