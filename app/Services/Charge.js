@@ -5,6 +5,9 @@ const Transaction = use('App/Model/Transaction')
 
 const Charge = exports = module.exports = {}
 
+//si gasta = 500 descuento de 10%
+//si gasta = 1000 descuento de 15%
+
 /**
  * Deduct const a service.
  * 
