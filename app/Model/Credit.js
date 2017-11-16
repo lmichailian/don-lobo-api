@@ -4,6 +4,13 @@ const Lucid = use('Lucid')
 
 class Credit extends Lucid {
 
+  /**
+   * 
+   */
+  customer () {
+    return this.belongsTo('App/Model/Customer')
+  }
+
  /**
  * rules for login
  */
