@@ -15,22 +15,34 @@ Charge.deductService = function * (service, credits) {
     const index = 0
     const first = credits[index]
 
-    if ((service.cost > first.amount)) {
-        const negative = first.amount - service.cost
-        first.amount = first.amount - first.amount
-        credits[index + 1].amount += negative
+    try {
+        const discount = service.cost === 500 ? 0.1 : service.cost === 1000 ? 0.15 : null
         
-        yield this.deduct (first.amount, first.id)
-        yield this.deduct (credits[index + 1].amount, credits[index + 1].id)
+        if (discount) {
+            service.cost = service.cost - (service.cost * discount)
+        }
+        
+        if ((service.cost > first.amount)) {
+            const negative = first.amount - service.cost
+            first.amount = first.amount - first.amount
+            credits[index + 1].amount += negative
+            
+            yield this.deduct (first.amount, first.id)
+            yield this.deduct (credits[index + 1].amount, credits[index + 1].id)
 
+            return {success: true}
+        }
+    
+        first.amount = first.amount - service.cost
+    
+        yield this.deduct (first.amount, first.id)
+       
         return {success: true}
+
+    } catch (e) {
+        return {success: false}
     }
 
-    first.amount = first.amount - service.cost
-
-    yield this.deduct (first.amount, first.id)
-   
-    return {success: true}
 }
 
 /**
