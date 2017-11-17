@@ -23,22 +23,22 @@ Route.post('/login', 'UserController.login')
  * Routing api donlobo v1
  */
 Route.group('version1', function () {
-    //Customers routes
+    // Customers routes
     Route.get('/customers', 'CustomerController.index')
     Route.post('/customer', 'CustomerController.store')
     Route.put('/customer/:id', 'CustomerController.update')
     Route.delete('/customer/:id', 'CustomerController.delete')
 
-    //Credit routes
+    // Credit routes
     Route.post('/credit', 'CreditController.store')
     Route.get('/credit/customer/:card', 'CreditController.show')
 
-    //Charge Service routes
+    // Charge Service routes
     Route.post('/service/charge', 'ServiceController.store')
 
-    //Transaction routes
+    // Transaction routes
     Route.get('/transactions', 'TransactionController.index')
     Route.get('/transaction/customer/:id', 'TransactionController.show')
 })
-.prefix('/api/v1')
-.middleware('authApi')
+    .prefix('/api/v1')
+    .middleware('authApi')
