@@ -10,6 +10,7 @@ class CustomersTableSchema extends Schema {
       table.string('phone')
       table.integer('card', '255')
       table.index('card')
+      table.datetime('birthday')
       table.timestamps()
       table.softDeletes()
     })
