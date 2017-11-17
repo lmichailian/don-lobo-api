@@ -25,20 +25,20 @@ Route.post('/login', 'UserController.login')
 Route.group('version1', function () {
     // Customers routes
     Route.get('/customers', 'CustomerController.index')
-    Route.post('/customer', 'CustomerController.store')
-    Route.put('/customer/:id', 'CustomerController.update')
-    Route.delete('/customer/:id', 'CustomerController.delete')
+    Route.post('/customers', 'CustomerController.store')
+    Route.put('/customers/:id', 'CustomerController.update')
+    Route.delete('/customers/:id', 'CustomerController.delete')
 
     // Credit routes
-    Route.post('/credit', 'CreditController.store')
-    Route.get('/credit/customer/:card', 'CreditController.show')
+    Route.post('/credits', 'CreditController.store')
+    Route.get('/credits/customers/:card', 'CreditController.show')
 
     // Charge Service routes
-    Route.post('/service/charge', 'ServiceController.store')
+    Route.post('/services/charges', 'ServiceController.store')
 
     // Transaction routes
     Route.get('/transactions', 'TransactionController.index')
-    Route.get('/transaction/customer/:id', 'TransactionController.show')
+    Route.get('/transactions/customers/:id', 'TransactionController.show')
 })
     .prefix('/api/v1')
     .middleware('authApi')
