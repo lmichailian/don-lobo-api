@@ -60,6 +60,7 @@ class CustomerController {
 
       customer.full_name = body.full_name
       customer.phone = body.phone
+      customer.birthday = body.birthday
 
       if (body.card) {
         customer.card = body.card
