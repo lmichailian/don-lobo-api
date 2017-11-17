@@ -23,6 +23,9 @@ Route.post('/login', 'UserController.login')
  * Routing api donlobo v1
  */
 Route.group('version1', function () {
+    //User routes
+
+    Route.get('/me', 'UserController.user')
     // Customers routes
     Route.get('/customers', 'CustomerController.index')
     Route.post('/customers', 'CustomerController.store')
