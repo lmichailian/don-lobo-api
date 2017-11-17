@@ -29,9 +29,20 @@ class Customer extends Lucid {
     return {
       full_name: 'required',
       phone: 'required',
-      card: 'required'
+      card: 'required|unique:customers'
     }
 }
+
+/**
+* rules for login
+*/
+  static updateRules (customerId) {
+    return {
+      full_name: 'required',
+      phone: 'required',
+      card: `unique:customers,card,id,${customerId}`,
+    }
+  }
 
 /**
  * rule's message
@@ -40,7 +51,8 @@ static get messages () {
   return {
     'full_name.required' : 'El nombre completo es un campo requerido',
     'phone.required' : 'El télefono es un campo requerido',
-    'card.required' : 'El numero de tarjeta es requerido'
+    'card.required' : 'El numero de tarjeta es requerido',
+    'card.unique'   : 'El número de tarjeta ya existe'
   }
 }
 
