@@ -56,7 +56,11 @@ class CustomerController {
     const body = request.all()
 
     try {
-      const customer = yield Customer.findByOrFail('id', request.param('id'))
+      const customer = yield Customer.findBy('id', request.param('id'))
+
+      if (!customer) {
+        yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
+      }
 
       customer.full_name = body.full_name
       customer.phone = body.phone
@@ -80,9 +84,14 @@ class CustomerController {
      */
   * delete (request, response) {
     try {
-      const customer = yield Customer.findByOrFail('id', request.param('id'))
+      const customer = yield Customer.findBy('id', request.param('id'))
+
+      if (!customer) {
+        yield response.status(404).json({ error: true, message: 'El recurso que quiere eliminar no existe' })
+      }
+
       yield customer.delete()
-      yield response.status(200).json({ error: false, message: 'Delete custommer is successfully' })
+      yield response.status(200).json({ error: false, message: 'El recurso se eliminó con exito' })
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
     }
