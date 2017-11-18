@@ -12,13 +12,18 @@ class CustomerController {
      * @param {*} response
      */
   * index (request, response) {
-    const customers = yield Database.select('customers.id', 'customers.full_name', 'customers.phone', 'customers.card')
-            .from('customers').sum('credits.amount as credits')
-            .innerJoin('credits', 'customers.id', 'credits.customer_id')
-            .whereNull('customers.deleted_at')
-            .where('credits.expired', false)
+    let customerCredit = []
+    let index = 0
+    const customers = yield Customer.all()
+      
+    for (let customer of customers) {
+      const credits = yield customer.creditsTotal()
+      customerCredit[index] = customer.toJSON()
+      customerCredit[index].credits = credits[0].credits
+      index++
+    }
 
-    yield response.status(200).json({ error: false, customers: customers })
+    yield response.status(200).json({ error: false, customers: customerCredit })
   }
 
     /**
