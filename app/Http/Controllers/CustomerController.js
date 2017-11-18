@@ -63,12 +63,21 @@ class CustomerController {
       }
 
       customer.full_name = body.full_name
-      customer.phone = body.phone
+      customer.phone     = body.phone
 
       if (body.card) {
-        customer.card = body.card
-      }
+        const customerId = request.param('id')
+        const rules = Customer.updateRules(customerId)
+        const validation = yield Validator.validate(body, rules)
 
+        if (validation.fails()) {
+          response.status(422).json({ error: true, message: validation.messages() })
+          return
+        }
+
+        customer.card = body.card 
+      }
+      
       yield customer.save()
       yield response.status(200).json({ error: false, customer: customer })
     } catch (e) {
