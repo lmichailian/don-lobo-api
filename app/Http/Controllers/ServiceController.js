@@ -30,7 +30,7 @@ class ServiceController {
         yield response.status(500).json({ error: true, message: 'No se pudo cobrar el servicio' })
       }
 
-      yield Charge.transaction(service.cost, service.service, customer, service)
+      yield Charge.transaction(-service.cost, service.service, customer, service)
 
       yield response.status(200).json({ error: false, message: 'El servicio se cobró' })
     } catch (e) {
