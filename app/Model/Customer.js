@@ -1,6 +1,7 @@
 'use strict'
 
 const Lucid = use('Lucid')
+const Database = use('Database')
 
 class Customer extends Lucid {
 
@@ -12,6 +13,15 @@ class Customer extends Lucid {
     .where('expired', false)
     .where('amount', '>', 0)
     .orderBy('created_at', 'ASC')
+  }
+
+  /**
+   * Sum Credits for custommer.
+   */
+  * creditsTotal() {
+   return  yield Database.from('credits').sum('amount as credits')
+                .where('expired', false)
+                .where('customer_id', this.id)
   }
 
   /**
