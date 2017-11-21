@@ -8,7 +8,7 @@ class CustomersTableSchema extends Schema {
       table.increments()
       table.string('full_name')
       table.string('phone')
-      table.integer('card', '255')
+      table.integer('card', '255').unique()
       table.index('card')
       table.datetime('birthday')
       table.timestamps()
