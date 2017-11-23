@@ -17,9 +17,7 @@ const User = use('App/Model/User')
 const Service = use('App/Model/Service')
 
 class DatabaseSeeder {
-
   * run () {
-
     yield User.create({
       email: 'admin@donlobo.com',
       username: 'donlobo',
@@ -30,7 +28,7 @@ class DatabaseSeeder {
       'service': 'Pelo',
       'cost': 200
     })
-    
+
     yield Service.create({
       'service': 'Barba',
       'cost': 150
@@ -40,9 +38,7 @@ class DatabaseSeeder {
       'service': 'Pelo y Barba',
       'cost': 300
     })
-
   }
-
 }
 
 module.exports = DatabaseSeeder
