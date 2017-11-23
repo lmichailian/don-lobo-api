@@ -38,4 +38,19 @@ Http.handleError = function * (error, request, response) {
  * starting http server.
  */
 Http.onStart = function () {
+  const Validator = use('Adonis/Addons/Validator')
+  const moment = require('moment')
+  Validator.extend('date', (data, field, message, args, get) => {
+
+    return new Promise((resolve, reject) => {
+      const fieldValue = get(data, field)
+      var date = moment(fieldValue,'YYYY-MM-DD', true);
+      if (date.isValid()) {
+        resolve('Allowed')
+        return
+      }
+      reject(message)
+    })
+
+  }, 'La fecha debe tener un formato válido ej: YYYY-MM-DD')
 }

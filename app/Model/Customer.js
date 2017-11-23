@@ -39,7 +39,8 @@ class Customer extends Lucid {
     return {
       full_name: 'required',
       phone: 'required',
-      card: 'required|unique:customers'
+      birthday: 'required|date',
+      card: 'required|unique:customers',
     }
 }
 
@@ -50,6 +51,7 @@ class Customer extends Lucid {
     return {
       full_name: 'required',
       phone: 'required',
+      birthday: 'date',
       card: `unique:customers,card,id,${customerId}`,
     }
   }
@@ -62,6 +64,7 @@ static get messages () {
     'full_name.required' : 'El nombre completo es un campo requerido',
     'phone.required' : 'El télefono es un campo requerido',
     'card.required' : 'El numero de tarjeta es requerido',
+    'birthday.required' : 'El campo cumpleaños es requerido',
     'card.unique'   : 'El número de tarjeta ya existe'
   }
 }
