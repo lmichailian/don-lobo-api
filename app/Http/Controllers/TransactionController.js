@@ -1,5 +1,6 @@
 'use strict'
 
+const Database = use('Database')
 const Transaction = use('App/Model/Transaction')
 
 class TransactionController {
@@ -24,12 +25,20 @@ class TransactionController {
      * @param {*} response
      */
   * show (request, response) {
+    let totalTransaction = []
     const transactions = yield Transaction
             .with('customer', 'service')
             .where('customer_id', request.param('id'))
             .fetch()
 
-    yield response.status(200).json({ error: false, transactions: transactions })
+    const total = yield Database.from('transactions')
+                      .sum('amount as total')
+                      .where('customer_id', request.param('id'))
+    
+    totalTransaction[0] = transactions.toJSON()
+    totalTransaction[1] = total[0]
+
+    yield response.status(200).json({ error: false, transactions: totalTransaction })
   }
 }
 

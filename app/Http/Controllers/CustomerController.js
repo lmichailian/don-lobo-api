@@ -12,13 +12,18 @@ class CustomerController {
      * @param {*} response
      */
   * index (request, response) {
-    const customers = yield Database.select('customers.id', 'customers.full_name', 'customers.phone', 'customers.card')
-            .from('customers').sum('credits.amount as credits')
-            .innerJoin('credits', 'customers.id', 'credits.customer_id')
-            .whereNull('customers.deleted_at')
-            .where('credits.expired', false)
+    let customerCredit = []
+    let index = 0
+    const customers = yield Customer.all()
+      
+    for (let customer of customers) {
+      const credits = yield customer.creditsTotal()
+      customerCredit[index] = customer.toJSON()
+      customerCredit[index].credits = credits[0].credits
+      index++
+    }
 
-    yield response.status(200).json({ error: false, customers: customers })
+    yield response.status(200).json({ error: false, customers: customerCredit })
   }
 
     /**
@@ -56,15 +61,30 @@ class CustomerController {
     const body = request.all()
 
     try {
-      const customer = yield Customer.findByOrFail('id', request.param('id'))
+      const customer = yield Customer.findBy('id', request.param('id'))
+
+      if (!customer) {
+        yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
+      }
 
       customer.full_name = body.full_name
       customer.phone = body.phone
+      customer.birthday = body.birthday
+
 
       if (body.card) {
-        customer.card = body.card
-      }
+        const customerId = request.param('id')
+        const rules = Customer.updateRules(customerId)
+        const validation = yield Validator.validate(body, rules)
 
+        if (validation.fails()) {
+          response.status(422).json({ error: true, message: validation.messages() })
+          return
+        }
+
+        customer.card = body.card 
+      }
+      
       yield customer.save()
       yield response.status(200).json({ error: false, customer: customer })
     } catch (e) {
@@ -80,9 +100,14 @@ class CustomerController {
      */
   * delete (request, response) {
     try {
-      const customer = yield Customer.findByOrFail('id', request.param('id'))
+      const customer = yield Customer.findBy('id', request.param('id'))
+
+      if (!customer) {
+        yield response.status(404).json({ error: true, message: 'El recurso que quiere eliminar no existe' })
+      }
+
       yield customer.delete()
-      yield response.status(200).json({ error: false, message: 'Delete custommer is successfully' })
+      yield response.status(200).json({ error: false, message: 'El recurso se eliminó con exito' })
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
     }

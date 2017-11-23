@@ -28,7 +28,7 @@ class Expired {
           creditObj.expired = 1
           yield creditObj.save()
           const customer = yield creditObj.customer().fetch()
-          yield Charge.transaction(creditObj.amount, 'Vencimiento de saldo', customer)
+          yield Charge.transaction(-creditObj.amount, 'Vencimiento de saldo', customer)
         }
       }
       console.log('Se terminó el proceso de vencimiento de créditos con éxito')

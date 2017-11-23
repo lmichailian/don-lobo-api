@@ -47,7 +47,7 @@ class User extends Lucid {
    */
   static get messages () {
     return {
-      'username.required' : 'El email es un campo requerido',
+      'username.required' : 'El username es un campo requerido',
       'password.required' : 'El password es un campo requerido'
     }
   }

@@ -28,6 +28,22 @@ class UserController {
       response.status(401).json({ error: true, message: 'username or password are not defined' })
     }
   }
+
+  /**
+   * Get data user logged.
+   * 
+   * @param {*} request 
+   * @param {*} response 
+   */
+  * user (request, response) {
+    try {
+      const user = request.auth.user
+      yield response.status(200).json({ error: false, user: user })
+    } catch (e) {
+      response.status(500).json({ error: true, message: e.message })
+    }
+    
+  }
 }
 
 module.exports = UserController
