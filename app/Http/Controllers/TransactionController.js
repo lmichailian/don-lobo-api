@@ -29,6 +29,7 @@ class TransactionController {
     const transactions = yield Transaction
             .with('customer', 'service')
             .where('customer_id', request.param('id'))
+            .orderBy('created_at', 'DESC')
             .fetch()
 
     const total = yield Database.from('transactions')
