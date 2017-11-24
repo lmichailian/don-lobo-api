@@ -21,12 +21,23 @@ Charge.deductService = function * (service, credits) {
   try {
     const discount = service.cost === 500 ? 0.1 : service.cost === 1000 ? 0.15 : null
 
+    console.log(discount)
+
     if (discount) {
       service.cost = service.cost - (service.cost * discount)
     }
 
+    if (service.cost > first.amount && credits[index + 1].amount === undefined) {
+      return {success: false, message: 'No posees saldo para comprar el servicio'}
+    }
+
     if ((service.cost > first.amount)) {
       const negative = first.amount - service.cost
+
+      if (Math.abs(negative) > credits[index + 1].amount) {
+        return {success: false, message: 'No posees saldo para comprar el servicio'}
+      }
+
       first.amount = first.amount - first.amount
       credits[index + 1].amount += negative
 
