@@ -15,8 +15,16 @@ class ServiceController {
      */
   * store (request, response) {
     try {
-      const customer = yield Customer.findByOrFail('card', request.input('card'))
-      const service = yield Service.findByOrFail('id', request.input('service'))
+      const customer = yield Customer.findBy('card', request.input('card'))
+      const service = yield Service.findBy('id', request.input('service'))
+
+      if (!customer) {
+        yield response.status(404).json({ error: true, message: 'El cliente no se encuentra con el número de tarjeta' })
+      }
+
+      if (!service) {
+        yield response.status(404).json({ error: true, message: 'El servicio solicitado no existe' })
+      }
 
       const credits = yield customer.credits().fetch()
 
