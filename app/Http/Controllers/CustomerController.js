@@ -67,21 +67,23 @@ class CustomerController {
         yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
       }
 
+      const customerId = request.param('id')
+      const rules = Customer.updateRules(customerId)
+
+      const validation = yield Validator.validate(body, rules, Customer.messages)
+
+
+      if (validation.fails()) {
+        response.status(422).json({ error: true, message: validation.messages() })
+        return
+      }
+
       customer.full_name = body.full_name
       customer.phone = body.phone
       customer.birthday = body.birthday
 
 
       if (body.card) {
-        const customerId = request.param('id')
-        const rules = Customer.updateRules(customerId)
-        const validation = yield Validator.validate(body, rules)
-
-        if (validation.fails()) {
-          response.status(422).json({ error: true, message: validation.messages() })
-          return
-        }
-
         customer.card = body.card 
       }
       
