@@ -26,24 +26,55 @@ Charge.deductService = function * (service, credits) {
     }
 
     if ((service.cost > first.amount)) {
-      const negative = first.amount - service.cost
-      first.amount = first.amount - first.amount
-      credits[index + 1].amount += negative
-
+      return yield this.deductCredits(credits, -service.cost)
+    } else {
+      first.amount = first.amount - service.cost
       yield this.deduct(first.amount, first.id)
-      yield this.deduct(credits[index + 1].amount, credits[index + 1].id)
-
       return { success: true }
     }
 
-    first.amount = first.amount - service.cost
-
-    yield this.deduct(first.amount, first.id)
-
-    return { success: true }
   } catch (e) {
     return { success: false }
   }
+}
+
+/**
+ * 
+ * Deduct customer's credits.
+ * 
+ * @param {*} credits 
+ * @param {*} amount 
+ */
+Charge.deductCredits = function * (credits, amount) {
+  let creditDeduct = []
+  let negative = amount
+  var i = 0 
+
+  for (let credit of credits) {
+    negative = credit.amount + negative
+    const saldo = credit.amount
+    creditDeduct[i] = {
+      id: credit.id,
+      negative: negative,
+      saldo: saldo
+    }
+    i++ 
+  }
+
+  if (creditDeduct[i-1].negative < 0) {
+    return {success: false}
+  }
+
+  const lastItem = creditDeduct.pop(); 
+
+  for (let credit of creditDeduct) {
+    yield this.deduct(0, credit.id)
+  }
+
+  yield this.deduct(lastItem.negative, lastItem.id)
+
+  return {success: true}
+
 }
 
 /**
@@ -53,10 +84,11 @@ Charge.deductService = function * (service, credits) {
  * @param {*} idCredit
  */
 Charge.deduct = function * (amount, idCredit) {
-  yield Database
+  return yield Database
         .table('credits')
         .where('id', idCredit)
         .update('amount', amount)
+   
 }
 
 /**

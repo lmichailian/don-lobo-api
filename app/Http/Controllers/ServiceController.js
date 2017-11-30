@@ -34,8 +34,8 @@ class ServiceController {
 
       const isSucces = yield Charge.deductService(service, credits.toJSON())
 
-      if (!isSucces) {
-        yield response.status(500).json({ error: true, message: 'No se pudo cobrar el servicio' })
+      if (!isSucces.success) {
+        yield response.status(500).json({ error: true, message: 'No se pudo cobrar el servicio, por falta de crédito' })
       }
 
       yield Charge.transaction(-service.cost, service.service, customer, service)
