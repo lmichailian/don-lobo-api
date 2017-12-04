@@ -14,35 +14,53 @@ class ServiceController {
      * @param {*} response
      */
   * store (request, response) {
+    var cost = 0
+    const customer = yield Customer.findBy('card', request.input('card'))
+    const totalCredit = yield customer.creditsTotal()
+    const services = request.input('services')
+    
     try {
-      const customer = yield Customer.findBy('card', request.input('card'))
-      const service = yield Service.findBy('id', request.input('service'))
-
       if (!customer) {
         yield response.status(404).json({ error: true, message: 'El cliente no se encuentra con el número de tarjeta' })
       }
 
-      if (!service) {
-        yield response.status(404).json({ error: true, message: 'El servicio solicitado no existe' })
+      for (let service of services) {
+        cost = cost + parseInt(service.amount)
       }
 
-      const credits = yield customer.credits().fetch()
+      if (cost > totalCredit[0].credits) {
+        yield response.status(500).json({ error: true, message: 'No posee saldo suficiente saldo para realizar la compra de los servicios' })
+      }
+
+      let credits = yield customer.credits().fetch()
 
       if (credits.toJSON().length === 0) {
         yield response.status(500).json({ error: true, message: 'No se posee saldo disponible, realice una recarga' })
       }
 
-      const isSucces = yield Charge.deductService(service, credits.toJSON())
+      for (let service of services) {
+        credits = yield customer.credits().fetch()
+        const serviceObj = yield Service.findBy('id', service.service)
+        
+        if (!serviceObj) {
+          yield response.status(404).json({ error: true, message: 'El servicio no existe' })
+        }
 
-      if (!isSucces.success) {
-        yield response.status(500).json({ error: true, message: 'No se pudo cobrar el servicio, por falta de crédito' })
+        const isSucces = yield Charge.deductService(service.amount, credits.toJSON())
+
+        if (!isSucces.success) {
+          yield response.status(500).json({ error: true, message: 'No se pudo cobrar el servicio, por falta de crédito' })
+        }
+
+        yield Charge.transaction(-service.amount, serviceObj.service, customer, serviceObj)
+        
       }
 
-      yield Charge.transaction(-service.cost, service.service, customer, service)
-
       yield response.status(200).json({ error: false, message: 'El servicio se cobró' })
+      
+      
     } catch (e) {
-      yield response.status(500).json({ error: true, message: e.message })
+       yield response.status(500).json({ error: true, message: e.message })
     }
   }
 }
