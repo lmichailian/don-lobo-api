@@ -14,21 +14,21 @@ const Charge = exports = module.exports = {}
  * @param {*} service
  * @param {*} credits
  */
-Charge.deductService = function * (service, credits) {
+Charge.deductService = function * (amount, credits) {
   const index = 0
   const first = credits[index]
 
   try {
-    const discount = service.cost === 500 ? 0.1 : service.cost === 1000 ? 0.15 : null
+    const discount = amount === 500 ? 0.1 : amount === 1000 ? 0.15 : null
 
     if (discount) {
-      service.cost = service.cost - (service.cost * discount)
+      amount = amount - (amount * discount)
     }
 
-    if ((service.cost > first.amount)) {
-      return yield this.deductCredits(credits, -service.cost)
+    if ((amount > first.amount)) {
+      return yield this.deductCredits(credits, -amount)
     } else {
-      first.amount = first.amount - service.cost
+      first.amount = first.amount - amount
       yield this.deduct(first.amount, first.id)
       return { success: true }
     }
