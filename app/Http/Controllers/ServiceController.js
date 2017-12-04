@@ -40,16 +40,19 @@ class ServiceController {
 
       for (let service of services) {
         credits = yield customer.credits().fetch()
+        const serviceObj = yield Service.findBy('id', service.service)
+        
+        if (!serviceObj) {
+          yield response.status(404).json({ error: true, message: 'El servicio no existe' })
+        }
+
         const isSucces = yield Charge.deductService(service.amount, credits.toJSON())
 
         if (!isSucces.success) {
           yield response.status(500).json({ error: true, message: 'No se pudo cobrar el servicio, por falta de crédito' })
         }
 
-        const serviceObj = yield Service.findBy('id', service.service)
-        const nameService = serviceObj ? serviceObj.service : service.service
-
-        yield Charge.transaction(-service.amount, nameService, customer, serviceObj)
+        yield Charge.transaction(-service.amount, serviceObj.service, customer, serviceObj)
         
       }
 
