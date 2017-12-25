@@ -5,17 +5,17 @@ const Database = use('Database')
 const Customer = use('App/Model/Customer')
 
 class CustomerController {
-    /**
-     * Get all customers.
-     *
-     * @param {*} request
-     * @param {*} response
-     */
+  /**
+   * Get all customers.
+   *
+   * @param {*} request
+   * @param {*} response
+   */
   * index (request, response) {
     let customerCredit = []
     let index = 0
     const customers = yield Customer.all()
-      
+
     for (let customer of customers) {
       const credits = yield customer.creditsTotal()
       customerCredit[index] = customer.toJSON()
@@ -26,12 +26,12 @@ class CustomerController {
     yield response.status(200).json({ error: false, customers: customerCredit })
   }
 
-    /**
-     * Create a customer.
-     *
-     * @param {*} request
-     * @param {*} response
-     */
+  /**
+   * Create a customer.
+   *
+   * @param {*} request
+   * @param {*} response
+   */
   * store (request, response) {
     const body = request.all()
 
@@ -51,12 +51,12 @@ class CustomerController {
     }
   }
 
-    /**
-     * Update data customer.
-     *
-     * @param {*} request
-     * @param {*} response
-     */
+  /**
+   * Update data customer.
+   *
+   * @param {*} request
+   * @param {*} response
+   */
   * update (request, response) {
     const body = request.all()
 
@@ -72,7 +72,6 @@ class CustomerController {
 
       const validation = yield Validator.validate(body, rules, Customer.messages)
 
-
       if (validation.fails()) {
         response.status(422).json({ error: true, message: validation.messages() })
         return
@@ -82,11 +81,10 @@ class CustomerController {
       customer.phone = body.phone
       customer.birthday = body.birthday
 
-
       if (body.card) {
-        customer.card = body.card 
+        customer.card = body.card
       }
-      
+
       yield customer.save()
       yield response.status(200).json({ error: false, customer: customer })
     } catch (e) {
@@ -94,12 +92,12 @@ class CustomerController {
     }
   }
 
-    /**
-     * Delete customer.
-     *
-     * @param {*} request
-     * @param {*} response
-     */
+  /**
+   * Delete customer.
+   *
+   * @param {*} request
+   * @param {*} response
+   */
   * delete (request, response) {
     try {
       const customer = yield Customer.findBy('id', request.param('id'))
