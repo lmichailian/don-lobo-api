@@ -6,9 +6,10 @@ class CustomersTableSchema extends Schema {
   up () {
     this.create('customers', (table) => {
       table.increments()
+      table.string('email')
       table.string('full_name')
       table.string('phone')
-      table.integer('card', '255').unique()
+      table.bigInteger('card').unique()
       table.index('card')
       table.datetime('birthday')
       table.timestamps()
