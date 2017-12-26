@@ -14,6 +14,13 @@ class CreditController {
      * @param {*} response
      */
   * show (request, response) {
+    const customer = yield Customer.findBy('card', request.param('card'));
+
+    if (!customer) {
+      response.status(404).json({ error: true, message: 'El número de tarjeta brindado no existe'})
+      return
+    }
+
     try {
       const credit =
                 yield Database.select('customers.id', 'customers.full_name', 'customers.phone')
