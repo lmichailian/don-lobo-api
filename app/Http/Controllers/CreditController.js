@@ -7,27 +7,26 @@ const Customer = use('App/Model/Customer')
 const Credit = use('App/Model/Credit')
 
 class CreditController {
-    /**
-     * Show total credit for customer.
-     *
-     * @param {*} request
-     * @param {*} response
-     */
+  /**
+   * Show total credit for customer.
+   *
+   * @param {*} request
+   * @param {*} response
+   */
   * show (request, response) {
-    const customer = yield Customer.findBy('card', request.param('card'));
+    const customer = yield Customer.findBy('card', request.param('card'))
 
-    if (!customer) {
-      response.status(404).json({ error: true, message: 'El número de tarjeta brindado no existe'})
+    if (customer === null) {
+      response.status(404).json({ error: true, message: 'El número de tarjeta brindado no existe' })
       return
     }
 
     try {
-      const credit =
-                yield Database.select('customers.id', 'customers.full_name', 'customers.phone')
-                    .from('customers').sum('credits.amount as credits')
-                    .innerJoin('credits', 'customers.id', 'credits.customer_id')
-                    .where('credits.expired', false)
-                    .where('customers.card', request.param('card'))
+      const credit = yield Database.select('customers.id', 'customers.full_name', 'customers.phone')
+        .from('customers').sum('credits.amount as credits')
+        .innerJoin('credits', 'customers.id', 'credits.customer_id')
+        .where('credits.expired', false)
+        .where('customers.card', request.param('card'))
 
       yield response.status(200).json({ error: false, credit: credit[0] })
     } catch (e) {
@@ -35,12 +34,12 @@ class CreditController {
     }
   }
 
-    /**
-     * Crate a credit for user.
-     *
-     * @param {*} request
-     * @param {*} response
-     */
+  /**
+   * Crate a credit for user.
+   *
+   * @param {*} request
+   * @param {*} response
+   */
   * store (request, response) {
     const validation = yield Validator.validate(request.all(), Credit.createRules, Credit.messages)
 
