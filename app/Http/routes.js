@@ -17,12 +17,21 @@
 
 const Route = use('Route')
 
+
+Route.get('/', function * (request, response) {
+  response.send('This is the home page, To access the api: http://api-donlobo.rockerlabs.co/api/v1')
+})
+
 Route.post('/login', 'UserController.login')
 
 /**
  * Routing api donlobo v1
  */
 Route.group('version1', function () {
+  
+  Route.get('/', function * (request, response) {
+    response.send('OK, API working correctly')
+  })
     // User routes
   Route.get('/me', 'UserController.user')
     // Customers routes
