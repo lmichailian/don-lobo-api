@@ -37,9 +37,10 @@ class TransactionController {
                       .where('customer_id', request.param('id'))
     
     totalTransaction[0] = transactions.toJSON()
+    total[0].total = total[0].total ? total[0].total : 0
     totalTransaction[1] = total[0]
 
-    yield response.status(200).json({ error: false, transactions: totalTransaction })
+    yield response.status(200).json({ error: false, transactions: totalTransaction[0], total: totalTransaction[1].total})
   }
 }
 
