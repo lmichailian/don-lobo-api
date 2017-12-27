@@ -11,7 +11,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * index (request, response) {
+  * index(request, response) {
     let customerCredit = []
     let index = 0
     const customers = yield Customer.all()
@@ -27,12 +27,32 @@ class CustomerController {
   }
 
   /**
+  * Get a customers.
+  *
+  * @param {*} request
+  * @param {*} response
+  */
+  * show(request, response) {
+    try {
+      const customer = yield Customer.findBy('id', request.param('id'))
+
+      if (!customer) {
+        yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
+      }
+
+      yield response.status(200).json({ error: false, customer: customer })
+    } catch (e) {
+      yield response.status(500).json({ error: true, message: e.message })
+    }
+  }
+
+  /**
    * Create a customer.
    *
    * @param {*} request
    * @param {*} response
    */
-  * store (request, response) {
+  * store(request, response) {
     const body = request.all()
 
     const validation = yield Validator.validate(request.all(), Customer.createRules, Customer.messages)
@@ -57,7 +77,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * update (request, response) {
+  * update(request, response) {
     const body = request.all()
 
     try {
@@ -98,7 +118,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * delete (request, response) {
+  * delete(request, response) {
     try {
       const customer = yield Customer.findBy('id', request.param('id'))
 

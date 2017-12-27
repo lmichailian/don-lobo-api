@@ -17,7 +17,6 @@
 
 const Route = use('Route')
 
-
 Route.get('/', function * (request, response) {
   response.send('This is the home page, To access the api: http://api-donlobo.rockerlabs.co/api/v1')
 })
@@ -28,28 +27,28 @@ Route.post('/login', 'UserController.login')
  * Routing api donlobo v1
  */
 Route.group('version1', function () {
-  
   Route.get('/', function * (request, response) {
     response.send('OK, API working correctly')
   })
-    // User routes
+  // User routes
   Route.get('/me', 'UserController.user')
-    // Customers routes
+  // Customers routes
   Route.get('/customers', 'CustomerController.index')
+  Route.get('/customers', 'CustomerController.show')
   Route.post('/customers', 'CustomerController.store')
   Route.put('/customers/:id', 'CustomerController.update')
   Route.delete('/customers/:id', 'CustomerController.delete')
 
-    // Credit routes
+  // Credit routes
   Route.post('/credits', 'CreditController.store')
   Route.get('/credits/customers/:card', 'CreditController.show')
 
-    // Charge Service routes
+  // Charge Service routes
   Route.post('/services/charges', 'ServiceController.store')
 
-    // Transaction routes
+  // Transaction routes
   Route.get('/transactions', 'TransactionController.index')
   Route.get('/transactions/customers/:id', 'TransactionController.show')
 })
-    .prefix('/api/v1')
-    .middleware('authApi')
+  .prefix('/api/v1')
+  .middleware('authApi')
