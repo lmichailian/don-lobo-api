@@ -13,7 +13,7 @@ class CreditController {
    * @param {*} request
    * @param {*} response
    */
-  * show(request, response) {
+  * show (request, response) {
     const customer = yield Customer.findBy('card', request.param('card'))
 
     if (customer === null) {
@@ -24,7 +24,7 @@ class CreditController {
     try {
       const credit = yield Database.select(
         'customers.id', 'customers.email', 'customers.birthday',
-        'customers.full_name', 'customers.phone'
+        'customers.full_name', 'customers.phone', 'customers.card'
       ).from('customers').sum('credits.amount as credits')
         .innerJoin('credits', 'customers.id', 'credits.customer_id')
         .where('credits.expired', false)
@@ -42,7 +42,7 @@ class CreditController {
    * @param {*} request
    * @param {*} response
    */
-  * store(request, response) {
+  * store (request, response) {
     const validation = yield Validator.validate(request.all(), Credit.createRules, Credit.messages)
 
     if (validation.fails()) {
