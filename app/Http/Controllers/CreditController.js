@@ -22,8 +22,10 @@ class CreditController {
     }
 
     try {
-      const credit = yield Database.select('customers.id', 'customers.full_name', 'customers.phone')
-        .from('customers').sum('credits.amount as credits')
+      const credit = yield Database.select(
+        'customers.id', 'customers.email', 'customer.birthday',
+        'customers.full_name', 'customers.phone'
+      ).from('customers').sum('credits.amount as credits')
         .innerJoin('credits', 'customers.id', 'credits.customer_id')
         .where('credits.expired', false)
         .where('customers.card', request.param('card'))
