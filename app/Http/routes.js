@@ -34,7 +34,7 @@ Route.group('version1', function () {
   Route.get('/me', 'UserController.user')
   // Customers routes
   Route.get('/customers', 'CustomerController.index')
-  Route.get('/customers', 'CustomerController.show')
+  Route.get('/customers/:id', 'CustomerController.show')
   Route.post('/customers', 'CustomerController.store')
   Route.put('/customers/:id', 'CustomerController.update')
   Route.delete('/customers/:id', 'CustomerController.delete')
