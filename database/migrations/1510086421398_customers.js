@@ -13,7 +13,6 @@ class CustomersTableSchema extends Schema {
       table.index('card')
       table.datetime('birthday')
       table.timestamps()
-      table.softDeletes()
     })
   }
 

@@ -13,7 +13,7 @@ class ServiceController {
    * @param {*} request
    * @param {*} response
    */
-  * store(request, response) {
+  * store (request, response) {
     var cost = 0
     const customer = yield Customer.findBy('card', request.input('card'))
     const totalCredit = yield customer.creditsTotal()
@@ -53,12 +53,9 @@ class ServiceController {
         }
 
         yield Charge.transaction(-service.amount, serviceObj.service, customer, serviceObj)
-
       }
 
       yield response.status(200).json({ error: false, message: 'El servicio se cobró' })
-
-
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
     }
