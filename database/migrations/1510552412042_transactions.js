@@ -8,8 +8,8 @@ class TransactionsTableSchema extends Schema {
       table.increments()
       table.string('type')
       table.decimal('amount')
-      table.integer('customer_id').unsigned().references('id').inTable('customers')
-      table.integer('service_id').unsigned().references('id').inTable('services')
+      table.integer('customer_id').unsigned().references('id').inTable('customers').onDelete('cascade')
+      table.integer('service_id').unsigned().references('id').inTable('services').onDelete('cascade')
       table.timestamps()
     })
   }

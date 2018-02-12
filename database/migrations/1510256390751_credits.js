@@ -8,7 +8,8 @@ class CreditsTableSchema extends Schema {
       table.increments()
       table.decimal('amount')
       table.boolean('expired').default(false)
-      table.integer('customer_id').unsigned().references('id').inTable('customers')
+      table.integer('customer_id').unsigned().references('id')
+        .inTable('customers').onDelete('cascade')
       table.timestamps()
     })
   }
