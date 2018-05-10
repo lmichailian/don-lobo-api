@@ -16,6 +16,16 @@ class Customer extends Lucid {
   }
 
   /**
+   * Transaction customer by id.
+   */
+  transactions (id) {
+    return this.hasMany('App/Model/Transaction')
+    .where('customer_id', id)
+    .orderBy('created_at', 'DESC')
+    
+  }
+
+  /**
    * Sum Credits for custommer.
    */
   * creditsTotal() {
