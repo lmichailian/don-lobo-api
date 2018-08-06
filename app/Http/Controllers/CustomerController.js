@@ -18,10 +18,18 @@ class CustomerController {
 
     for (let customer of customers) {
       const credits = yield customer.creditsTotal()
+      var transaction = yield customer.transactions(customer.id)
+      transaction = transaction.shift()
       customerCredit[index] = customer.toJSON()
       customerCredit[index].credits = credits[0].credits
+      customerCredit[index].created_at_last_transaction = transaction ? transaction.created_at :  '0000-00-00 00:00:00'
       index++
     }
+
+    //Se ordena los clientes por la transacción más reciente
+    customerCredit.sort((a, b) => {
+      return new Date(b.created_at_last_transaction) - new Date(a.created_at_last_transaction);
+    })
 
     yield response.status(200).json({ error: false, customers: customerCredit })
   }
