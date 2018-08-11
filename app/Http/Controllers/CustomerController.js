@@ -1,8 +1,8 @@
 'use strict'
 
 const Validator = use('Validator')
-const Database = use('Database')
 const Customer = use('App/Model/Customer')
+const User = use('App/Model/User')
 
 class CustomerController {
   /**
@@ -11,7 +11,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * index(request, response) {
+  * index (request, response) {
     let customerCredit = []
     let index = 0
     const customers = yield Customer.all()
@@ -22,13 +22,13 @@ class CustomerController {
       transaction = transaction.shift()
       customerCredit[index] = customer.toJSON()
       customerCredit[index].credits = credits[0].credits
-      customerCredit[index].created_at_last_transaction = transaction ? transaction.created_at :  '0000-00-00 00:00:00'
+      customerCredit[index].created_at_last_transaction = transaction ? transaction.created_at : '0000-00-00 00:00:00'
       index++
     }
 
-    //Se ordena los clientes por la transacción más reciente
+    // Se ordena los clientes por la transacción más reciente
     customerCredit.sort((a, b) => {
-      return new Date(b.created_at_last_transaction) - new Date(a.created_at_last_transaction);
+      return new Date(b.created_at_last_transaction) - new Date(a.created_at_last_transaction)
     })
 
     yield response.status(200).json({ error: false, customers: customerCredit })
@@ -40,7 +40,7 @@ class CustomerController {
   * @param {*} request
   * @param {*} response
   */
-  * show(request, response) {
+  * show (request, response) {
     try {
       const customer = yield Customer.findBy('id', request.param('id'))
 
@@ -60,7 +60,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * store(request, response) {
+  * store (request, response) {
     const body = request.all()
 
     const validation = yield Validator.validate(request.all(), Customer.createRules, Customer.messages)
@@ -72,7 +72,21 @@ class CustomerController {
 
     try {
       const customer = new Customer(body)
+
+      const user = new User({
+        username: customer.email,
+        email: customer.email,
+        password: customer.phone
+      })
+
+      yield user.save()
+
+      yield user.roles().attach([4])
+
+      customer.user_id = user.id
+
       yield customer.save()
+
       yield response.status(201).json({ error: false, customer: customer })
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
@@ -85,7 +99,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * update(request, response) {
+  * update (request, response) {
     const body = request.all()
 
     try {
@@ -126,7 +140,7 @@ class CustomerController {
    * @param {*} request
    * @param {*} response
    */
-  * delete(request, response) {
+  * delete (request, response) {
     try {
       const customer = yield Customer.findBy('id', request.param('id'))
 

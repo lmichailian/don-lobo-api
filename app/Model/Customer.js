@@ -21,7 +21,10 @@ class Customer extends Lucid {
     return this.hasMany('App/Model/Transaction')
     .where('customer_id', id)
     .orderBy('created_at', 'DESC')
-    
+  }
+
+  user () {
+    return this.belongsTo('App/Model/User')
   }
 
   /**

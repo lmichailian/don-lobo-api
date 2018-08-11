@@ -30,14 +30,34 @@ Route.group('version1', function () {
   Route.get('/', function * (request, response) {
     response.send('OK, API working correctly')
   })
+
   // User routes
   Route.get('/me', 'UserController.user')
+
   // Customers routes
   Route.get('/customers', 'CustomerController.index')
   Route.get('/customers/:id', 'CustomerController.show')
   Route.post('/customers', 'CustomerController.store')
   Route.put('/customers/:id', 'CustomerController.update')
   Route.delete('/customers/:id', 'CustomerController.delete')
+
+  // Users routes
+  Route.get('/users', 'UserController.index')
+  Route.post('/users', 'UserController.store')
+  Route.put('/users/:id', 'UserController.update')
+  Route.delete('/users/:id', 'UserController.delete')
+
+  // Users routes
+  Route.get('/schedule', 'ScheduleController.index')
+  Route.post('/schedule', 'ScheduleController.store')
+  Route.put('/schedule/:id', 'ScheduleController.update')
+  Route.delete('/schedule/:id', 'ScheduleController.delete')
+
+  Route.put('/schedule/:id/status', 'ScheduleController.status')
+
+  // Claims routes
+  Route.get('/claims', 'ClaimsController.index')
+  Route.post('/claims', 'ClaimsController.store')
 
   // Credit routes
   Route.post('/credits', 'CreditController.store')

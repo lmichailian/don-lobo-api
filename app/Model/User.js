@@ -4,14 +4,13 @@ const Lucid = use('Lucid')
 const Hash = use('Hash')
 
 class User extends Lucid {
-
    /**
      * fields to hide when fetch rows
      *
      * @return {Array}
      */
-    static get hidden () {
-      return ['password']
+  static get hidden () {
+    return ['password']
   }
 
   /**
@@ -36,10 +35,29 @@ class User extends Lucid {
    * rules for login
    */
   static get loginRules () {
-      return {
-        username: 'required',
-        password: 'required'
-      }
+    return {
+      username: 'required',
+      password: 'required'
+    }
+  }
+
+  static get createRules () {
+    return {
+      username: 'required',
+      password: 'required',
+      email: 'email|required'
+    }
+  }
+
+  /**
+  * rules for login
+  */
+  static updateRules (userId) {
+    return {
+      username: `required|unique:users,username,id,${userId}`,
+      password: 'required',
+      email: `required|email|unique:users,email,id,${userId}`
+    }
   }
 
   /**
@@ -47,13 +65,19 @@ class User extends Lucid {
    */
   static get messages () {
     return {
-      'username.required' : 'El username es un campo requerido',
-      'password.required' : 'El password es un campo requerido'
+      'username.required': 'El username es un campo requerido',
+      'password.required': 'El password es un campo requerido',
+      'email.required': 'El email es un campo requerido'
     }
   }
 
- 
+  customer () {
+    return this.hasOne('App/Model/Customer')
+  }
 
+  roles () {
+    return this.belongsToMany('App/Model/Rol', 'rol_user')
+  }
 }
 
 module.exports = User
