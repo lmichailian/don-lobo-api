@@ -8,7 +8,7 @@ class PostsTableSchema extends Schema {
       table.increments()
 
       table.string('title')
-      table.string('body')
+      table.text('body')
       table.time('time').nullable()
       table.string('location').nullable()
 
