@@ -1,30 +1,43 @@
 'use strict'
 
 const Schedule = use('App/Model/Schedule')
-const Validator = use('Validator')
+const scheduleSrv = use('App/Services/Schedule')
+const Branch = use('App/Model/Branch')
 const moment = use('moment')
+const Validator = use('Validator')
 
 class ScheduleController {
   * index (request, response) {
     const userId = Object.keys(request.only('user_id')).length > 0 ? request.only('user_id') : null
     const startAt = Object.keys(request.only('start_at')).length > 0 ? request.only('start_at').start_at : null
+    const service = Object.keys(request.only('service')).length > 0 ? request.only('service').service : null
 
-    let schedule = Schedule.query().with(['customer', 'barber', 'service'])
+    if (!startAt) return yield response.status(422).json({ error: true, message: 'Date is required' })
 
     try {
-      if (userId && !startAt) {
-        schedule = schedule.where('user_id', userId)
-      } else if (!userId && startAt) {
-        schedule = schedule
-        .where('start_at', '>=', startAt)
-        .where('start_at', '<', `${moment(startAt).format('YYYY-MM-DD')} 23:59:59`)
-      } else if (userId && startAt) {
-        schedule = schedule.where('start_at', '>=', startAt)
-        .where('start_at', '<', `${moment(startAt).format('YYYY-MM-DD')} 23:59:59`)
-        .where('user_id', userId)
+      if (!userId) {
+        const branch = yield Branch.query().with('branchSchedule').fetch()
+        const isWeekend = yield scheduleSrv.isWeekend()
+        const schedule = yield scheduleSrv.getTodayServices(startAt, service)
+
+        let timeRanges = yield branch.toJSON()[0].branchSchedule
+        .map(function * ({days, open_at, close_at}) {
+          return {
+            days,
+            hours: yield scheduleSrv.getAvailableTime(`${startAt} ${open_at}`, `${startAt} ${close_at}`, schedule)
+          }
+        })
+
+        if (!isWeekend) {
+          timeRanges = timeRanges.filter(el => el.days !== 'weekend_morning')
+        } else {
+          timeRanges = timeRanges.filter(el => el.days === 'weekend_morning')
+        }
+
+        yield response.status(200).json({ error: false, timeRanges })
       }
 
-      schedule = yield schedule.fetch()
+      const schedule = Schedule.query().with(['customer', 'barber', 'service']).fetch()
 
       yield response.status(200).json({ error: false, schedule })
     } catch (e) {

@@ -50,8 +50,11 @@ Route.group('version1', function () {
   // Posts routes
   Route.get('/posts', 'PostsController.index')
   Route.post('/posts', 'PostsController.store')
+  Route.get('/posts/:id', 'PostsController.show')
   Route.put('/posts/:id', 'PostsController.update')
   Route.delete('/posts/:id', 'PostsController.delete')
+
+  Route.put('/posts/:id/status', 'PostsController.status')
 
   // Users routes
   Route.get('/schedule', 'ScheduleController.index')

@@ -6,11 +6,20 @@ const Validator = use('Validator')
 class PostsController {
   * index (request, response) {
     const posts = yield Post.all()
-    yield response.status(200).json({error: false, posts})
+    yield response.status(200).json({ error: false, posts })
+  }
+
+  * show (request, response) {
+    try {
+      const post = yield Post.find(request.param('id'))
+      yield response.json({post})
+    } catch (e) {
+      response.status(500).json({ error: true, message: e.message })
+    }
   }
 
   * store (request, response) {
-    const {body, title, time, location, images} = request.all()
+    const { body, title, time, location } = request.all()
     const validation = yield Validator.validate(request.all(), Post.createRules, Post.messages)
 
     if (validation.fails()) {
@@ -18,7 +27,7 @@ class PostsController {
     }
 
     try {
-      const post = new Post({body, title, time, location})
+      const post = new Post({ body, title, time, location })
       yield post.save()
 
       yield response.status(200).json({ error: false, post })
@@ -62,6 +71,22 @@ class PostsController {
 
       yield user.delete()
       yield response.status(200).json({ error: false, message: 'El recurso se eliminó con exito' })
+    } catch (e) {
+      yield response.status(500).json({ error: true, message: e.message })
+    }
+  }
+
+  * status (request, response) {
+    const post = yield Post.findBy('id', request.param('id'))
+
+    if (!post) {
+      yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
+    }
+
+    try {
+      post.status = !post.status
+      yield post.save()
+      yield response.status(200).json({ error: false, message: 'El estado se cambio con éxito', post })
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
     }

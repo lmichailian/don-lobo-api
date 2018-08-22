@@ -24,6 +24,7 @@
     "adonis-scheduler": "git+https://github.com/nrempel/adonis-scheduler.git#adonis-v3",
     "adonis-validation-provider": "^3.0.5",
     "adonis-websocket": "^1.0.3",
+    "moment-range": "^4.0.1",
     "mysql": "^2.15.0",
     "youch": "^2.0.4"
   },
