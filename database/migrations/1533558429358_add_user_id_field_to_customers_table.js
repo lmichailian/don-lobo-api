@@ -5,11 +5,7 @@ const Schema = use('Schema')
 class CustomersTableSchema extends Schema {
   up () {
     this.table('customers', (table) => {
-      table.integer('user_id')
-        .unsigned()
-        .references('id')
-        .inTable('users')
-        .onDelete('cascade')
+      table.integer('user_id').nullable()
     })
   }
 
