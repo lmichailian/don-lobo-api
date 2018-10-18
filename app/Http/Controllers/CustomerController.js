@@ -34,6 +34,12 @@ class CustomerController {
     yield response.status(200).json({ error: false, customers: customerCredit })
   }
 
+  * indexAll (request, response) {
+    const customers = yield Customer.all()
+
+    yield response.status(200).json({ error: false, customers })
+  }
+
   /**
   * Get a customers.
   *
@@ -76,11 +82,10 @@ class CustomerController {
       const user = new User({
         username: customer.email,
         email: customer.email,
-        password: customer.phone
+        password: customer.email
       })
 
       yield user.save()
-
       yield user.roles().attach([4])
 
       customer.user_id = user.id

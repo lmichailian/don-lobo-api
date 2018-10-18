@@ -50,7 +50,7 @@ class UserController {
   }
 
   * store (request, response) {
-    const {username, password, email, roles} = request.all()
+    const {username, password, email, roles, ranges} = request.all()
     const validation = yield Validator.validate(request.all(), User.createRules, User.messages)
 
     if (validation.fails()) {
@@ -61,6 +61,10 @@ class UserController {
     try {
       const user = new User({username, password, email})
       yield user.save()
+
+      if (roles.includes(3)) {
+        yield user.ranges().createMany(ranges)
+      }
 
       yield user.roles().attach(roles)
 
@@ -99,6 +103,22 @@ class UserController {
       yield user.roles().sync(roles)
 
       yield response.status(200).json({ error: false, user: user })
+    } catch (e) {
+      yield response.status(500).json({ error: true, message: e.message })
+    }
+  }
+
+  * status (request, response) {
+    const user = yield User.findBy('id', request.param('id'))
+
+    if (!user) {
+      yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
+    }
+
+    try {
+      user.status = !user.status
+      yield user.save()
+      yield response.status(200).json({ error: false, message: 'El estado se cambio con éxito', user })
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
     }

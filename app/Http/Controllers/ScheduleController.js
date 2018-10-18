@@ -5,8 +5,21 @@ const scheduleSrv = use('App/Services/Schedule')
 const Branch = use('App/Model/Branch')
 const moment = use('moment')
 const Validator = use('Validator')
+const _ = use('lodash')
 
 class ScheduleController {
+  * today (request, response) {
+    const schedules = yield Schedule.query().with('barber', 'customer', 'service').fetch()
+    const startAt = request.all().start_at
+
+    const dateSchedules = schedules.toJSON().filter((el) => {
+      return moment(el.start_at).format('YYYY-MM-DD') >= `${startAt}` &&
+        moment(el.start_at).format('YYYY-MM-DD') <= `${startAt}`
+    })
+
+    yield response.status(200).json({ error: true, dateSchedules })
+  }
+
   * index (request, response) {
     const userId = Object.keys(request.only('user_id')).length > 0 ? request.only('user_id') : null
     const startAt = Object.keys(request.only('start_at')).length > 0 ? request.only('start_at').start_at : null
@@ -46,18 +59,39 @@ class ScheduleController {
   }
 
   * store (request, response) {
-    const body = request.all()
+    const body = request.except('availables')
+    const availables = request.only('availables')
     const validation = yield Validator.validate(request.all(), Schedule.rules, Schedule.messages)
 
-    if (validation.fails()) {
-      response.status(422).json({ error: true, message: validation.messages() })
+    if (body.user_id === 'na') {
+      body.user_id = availables.availables[_.random(0, availables.length - 1)]
+    }
+
+    const existTurn = yield Schedule.query()
+      .where('start_at', body.start_at)
+      .where('customer_id', body.customer_id)
+      .fetch()
+
+    if (existTurn.toJSON().length > 0) {
+      yield response.status(422).json({ error: true, message: existTurn })
       return
+    }
+
+    if (validation.fails()) {
+      yield response.status(422).json({ error: true, message: validation.messages() })
+      return
+    }
+
+    if (body.service_id === 3) {
+      body.end_at = moment(body.start_at).add(60, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+    } else {
+      body.end_at = moment(body.start_at).add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss')
     }
 
     try {
       const schedule = new Schedule(body)
       yield schedule.save()
-      yield response.status(200).json({ error: false, schedule })
+      yield response.status(200).json({ error: false, schedule: body })
     } catch (e) {
       yield response.status(500).json({ error: true, message: e.message })
     }

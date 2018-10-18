@@ -40,12 +40,17 @@ Route.group('version1', function () {
   Route.post('/customers', 'CustomerController.store')
   Route.put('/customers/:id', 'CustomerController.update')
   Route.delete('/customers/:id', 'CustomerController.delete')
+  Route.get('/customers-all', 'CustomerController.indexAll')
 
   // Users routes
   Route.get('/users', 'UserController.index')
   Route.post('/users', 'UserController.store')
   Route.put('/users/:id', 'UserController.update')
   Route.delete('/users/:id', 'UserController.delete')
+
+  Route.put('/users/:id/status', 'UserController.status')
+
+  Route.get('/barbers', 'BarbersController.index')
 
   // Posts routes
   Route.get('/posts', 'PostsController.index')
@@ -58,6 +63,7 @@ Route.group('version1', function () {
 
   // Users routes
   Route.get('/schedule', 'ScheduleController.index')
+  Route.get('/schedule-today', 'ScheduleController.today')
   Route.post('/schedule', 'ScheduleController.store')
   Route.put('/schedule/:id', 'ScheduleController.update')
   Route.delete('/schedule/:id', 'ScheduleController.delete')

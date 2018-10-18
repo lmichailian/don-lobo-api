@@ -78,6 +78,10 @@ class User extends Lucid {
   roles () {
     return this.belongsToMany('App/Model/Rol', 'rol_user')
   }
+
+  ranges () {
+    return this.hasMany('App/Model/WorkingRanges')
+  }
 }
 
 module.exports = User
