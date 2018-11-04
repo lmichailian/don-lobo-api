@@ -50,7 +50,7 @@ class UserController {
   }
 
   * store (request, response) {
-    const {username, password, email, roles, ranges} = request.all()
+    const {username, password, email, rol_id, ranges} = request.all()
     const validation = yield Validator.validate(request.all(), User.createRules, User.messages)
 
     if (validation.fails()) {
@@ -62,11 +62,9 @@ class UserController {
       const user = new User({username, password, email})
       yield user.save()
 
-      if (roles.includes(3)) {
-        yield user.ranges().createMany(ranges)
-      }
+      yield user.ranges().createMany(ranges)
 
-      yield user.roles().attach(roles)
+      yield user.roles().attach(rol_id)
 
       yield response.status(200).json({ error: false, user })
     } catch (e) {

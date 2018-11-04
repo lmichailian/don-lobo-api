@@ -43,9 +43,9 @@ class User extends Lucid {
 
   static get createRules () {
     return {
-      username: 'required',
+      username: 'required|unique:users,username',
       password: 'required',
-      email: 'email|required'
+      email: 'email|required|unique:users,email'
     }
   }
 
@@ -65,9 +65,11 @@ class User extends Lucid {
    */
   static get messages () {
     return {
-      'username.required': 'El username es un campo requerido',
-      'password.required': 'El password es un campo requerido',
-      'email.required': 'El email es un campo requerido'
+      'username.required': 'El usuario es un campo requerido',
+      'password.required': 'La contraseña es un campo requerido',
+      'email.required': 'El email es un campo requerido',
+      'username.unique': 'El usuario ya fue tomado, por favor ingrese uno distinto',
+      'email.unique': 'El email ya fue tomado, por favor ingrese uno distinto'
     }
   }
 
