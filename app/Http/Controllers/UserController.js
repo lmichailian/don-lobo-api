@@ -49,6 +49,11 @@ class UserController {
     yield response.status(200).json({ error: false, users })
   }
 
+  * show (request, response) {
+    const user = yield User.query().with('roles', 'ranges').first(request.param('id'))
+    yield response.status(200).json({ error: false, user })
+  }
+
   * store (request, response) {
     const {username, password, email, rol_id, ranges} = request.all()
     const validation = yield Validator.validate(request.all(), User.createRules, User.messages)
@@ -73,7 +78,7 @@ class UserController {
   }
 
   * update (request, response) {
-    const {username, password, email, roles} = request.all()
+    const {username, password, email, rol_id} = request.all()
 
     try {
       const user = yield User.findBy('id', request.param('id'))
@@ -98,7 +103,7 @@ class UserController {
 
       yield user.save()
 
-      yield user.roles().sync(roles)
+      yield user.roles().sync(rol_id)
 
       yield response.status(200).json({ error: false, user: user })
     } catch (e) {
