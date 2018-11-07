@@ -16,6 +16,10 @@ class Post extends Lucid {
       'body.required': 'El cuerpo del mensaje es requerido'
     }
   }
+
+  images () {
+    return this.hasMany('App/Model/PostImage')
+  }
 }
 
 module.exports = Post

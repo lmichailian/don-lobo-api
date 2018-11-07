@@ -62,6 +62,9 @@ Route.group('version1', function () {
 
   Route.put('/posts/:id/status', 'PostsController.status')
 
+  Route.delete('/post-images/:id', 'PostImageController.delete')
+  Route.post('/post-images/:id', 'PostImageController.store')
+
   // Users routes
   Route.get('/schedule', 'ScheduleController.index')
   Route.get('/schedule-today', 'ScheduleController.today')

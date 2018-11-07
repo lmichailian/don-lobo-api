@@ -2,6 +2,8 @@
 
 const Post = use('App/Model/Post')
 const Validator = use('Validator')
+const Helpers = use('Helpers')
+const moment = use('moment')
 
 class PostsController {
   * index (request, response) {
@@ -11,27 +13,45 @@ class PostsController {
 
   * show (request, response) {
     try {
-      const post = yield Post.find(request.param('id'))
+      const post = yield Post.query().with('images').where('id', request.param('id')).first()
       yield response.json({post})
     } catch (e) {
+      console.log(e)
       response.status(500).json({ error: true, message: e.message })
     }
   }
 
   * store (request, response) {
     const { body, title, time, location } = request.all()
+
     const validation = yield Validator.validate(request.all(), Post.createRules, Post.messages)
+    const files = request.file('images')
+    let dataFiles = []
 
     if (validation.fails()) {
       return response.status(422).json({ error: true, message: validation.messages() })
     }
 
     try {
+      for (let item of files) {
+        yield item.move(`${Helpers.publicPath()}/uploads`, item.file.name)
+
+        if (item.moved) {
+          dataFiles.push({
+            name: item.file.name,
+            path: `/uploads/${item.file.name}`
+          })
+        }
+      }
+
       const post = new Post({ body, title, time, location })
       yield post.save()
 
+      yield post.images().createMany(dataFiles)
+
       yield response.status(200).json({ error: false, post })
     } catch (e) {
+      console.log('ERROR_POST', e)
       response.status(500).json({ error: true, message: e.message })
     }
   }

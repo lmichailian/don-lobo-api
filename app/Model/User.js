@@ -62,7 +62,6 @@ class User extends Lucid {
   static updateRules (userId) {
     return {
       username: `required|unique:users,username,id,${userId}`,
-      password: 'required',
       email: `required|email|unique:users,email,id,${userId}`
     }
   }

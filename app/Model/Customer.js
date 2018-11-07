@@ -28,7 +28,7 @@ class Customer extends Lucid {
   }
 
   /**
-   * Sum Credits for custommer.
+   * Sum Credits for customer.
    */
   * creditsTotal () {
     return yield Database.from('credits').sum('amount as credits')
