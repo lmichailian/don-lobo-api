@@ -65,6 +65,17 @@ Route.group('version1', function () {
   Route.delete('/post-images/:id', 'PostImageController.delete')
   Route.post('/post-images/:id', 'PostImageController.store')
 
+  Route.get('/products', 'ProductsController.index')
+  Route.post('/products', 'ProductsController.store')
+  Route.get('/products/:id', 'ProductsController.show')
+  Route.put('/products/:id', 'ProductsController.update')
+  Route.delete('/products/:id', 'ProductsController.delete')
+
+  Route.put('/products/:id/status', 'ProductsController.status')
+
+  Route.delete('/product-images/:id', 'ProductImageController.delete')
+  Route.post('/product-images/:id', 'ProductImageController.store')
+
   // Users routes
   Route.get('/schedule', 'ScheduleController.index')
   Route.get('/schedule-today', 'ScheduleController.today')

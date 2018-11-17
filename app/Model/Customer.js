@@ -2,6 +2,7 @@
 
 const Lucid = use('Lucid')
 const Database = use('Database')
+const Env = use('Env')
 
 class Customer extends Lucid {
   /**
@@ -36,15 +37,24 @@ class Customer extends Lucid {
       .where('customer_id', this.id)
   }
 
+  getImage (image) {
+    if (!image) {
+      return `${Env.get('BASE_URL')}/profile/default.png`
+    }
+
+    return `${Env.get('BASE_URL')}${image}`
+  }
+
   /**
   * rules for login
   */
   static get createRules () {
     return {
       full_name: 'required',
+      email: 'unique:customers',
       phone: 'required',
       birthday: 'required|date',
-      card: 'required|unique:customers'
+      card: 'unique:customers'
     }
   }
 
@@ -56,6 +66,7 @@ class Customer extends Lucid {
       full_name: 'required',
       phone: 'required',
       birthday: 'date',
+      email: `unique:customers,email,id,${customerId}`,
       card: `unique:customers,card,id,${customerId}`
     }
   }

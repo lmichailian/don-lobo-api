@@ -1,9 +1,9 @@
 'use strict'
 
-const PostImage = use('App/Model/PostImage')
+const ProductImage = use('App/Model/ProductImage')
 const Helpers = use('Helpers')
 
-class PostImageController {
+class ProductImageController {
   * store (request, response) {
     try {
       const files = request.file('image')
@@ -18,13 +18,13 @@ class PostImageController {
         }
       }
 
-      const postImage = new PostImage({
-        post_id: request.param('id'),
+      const productImage = new ProductImage({
+        product_id: request.param('id'),
         ...dataFiles
       })
 
-      yield postImage.save()
-      yield response.status(200).json({ error: false, postImage })
+      yield productImage.save()
+      yield response.status(200).json({ error: false, productImage })
     } catch (e) {
       console.log(e)
       yield response.status(500).json({ error: true, e })
@@ -33,7 +33,7 @@ class PostImageController {
 
   * delete (request, response) {
     try {
-      const image = yield PostImage.findBy('id', request.param('id'))
+      const image = yield ProductImage.findBy('id', request.param('id'))
 
       if (!image) {
         yield response.status(404).json({ error: true, message: 'El recurso que quiere eliminar no existe' })
@@ -47,4 +47,4 @@ class PostImageController {
   }
 }
 
-module.exports = PostImageController
+module.exports = ProductImageController
