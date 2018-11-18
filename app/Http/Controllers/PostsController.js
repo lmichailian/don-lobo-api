@@ -7,7 +7,7 @@ const moment = use('moment')
 
 class PostsController {
   * index (request, response) {
-    const posts = yield Post.all()
+    const posts = yield Post.query().with('images').fetch()
     yield response.status(200).json({ error: false, posts })
   }
 
