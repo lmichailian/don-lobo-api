@@ -7,7 +7,7 @@ const moment = use('moment')
 
 class ProductsController {
   * index (request, response) {
-    const products = yield Product.all()
+    const products = yield Product.query().with('images').fetch()
     yield response.status(200).json({ error: false, products })
   }
 
