@@ -37,7 +37,7 @@ class UserController {
    */
   * user (request, response) {
     try {
-      const user = request.auth.user
+      const user = request.auth.user.with('customer')
       yield response.status(200).json({ error: false, user: user })
     } catch (e) {
       response.status(500).json({ error: true, message: e.message })
