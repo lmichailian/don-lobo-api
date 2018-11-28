@@ -2,3 +2,4 @@
 .DS_Store
 node_modules/*
 storage/sessions/*
+public/uploads/*
