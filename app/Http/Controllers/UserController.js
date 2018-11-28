@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Model/User')
+const Customer = use('App/Model/Customer')
 const Validator = use('Validator')
 
 class UserController {
@@ -45,7 +46,7 @@ class UserController {
         .with('customer.turns.barber')
         .where('id', user.id).first()
 
-      const field = yield Customer.findBy('id', userData.toJSON().customer.id)
+      const customer = yield Customer.findBy('id', userData.toJSON().customer.id)
 
       const parsed = userData.toJSON()
       const credits = yield customer.creditsTotal()
