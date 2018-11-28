@@ -41,11 +41,17 @@ class UserController {
       const userData = yield User.query()
         .with('roles', 'ranges', 'customer')
         .with('customer.turns')
-        .with('customer.creditsTotal')
         .with('customer.turns.service')
         .with('customer.turns.barber')
         .where('id', user.id).first()
-      yield response.status(200).json({ error: false, user: userData })
+
+      const field = yield Customer.findBy('id', userData.toJSON().customer.id)
+
+      const parsed = userData.toJSON()
+      const credits = yield customer.creditsTotal()
+      parsed.credits = credits[0].credits
+
+      yield response.status(200).json({ error: false, user: parsed })
     } catch (e) {
       response.status(500).json({ error: true, message: e.message })
     }
