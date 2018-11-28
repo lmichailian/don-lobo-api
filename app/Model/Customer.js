@@ -52,8 +52,6 @@ class Customer extends Lucid {
     return {
       full_name: 'required',
       email: 'unique:customers',
-      phone: 'required',
-      birthday: 'required|date',
       card: 'unique:customers'
     }
   }

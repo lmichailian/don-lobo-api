@@ -22,7 +22,7 @@ class PostsController {
   }
 
   * store (request, response) {
-    const { body, title, time, location } = request.all()
+    const { body, title, time, location, featured } = request.all()
 
     const validation = yield Validator.validate(request.all(), Post.createRules, Post.messages)
     const files = request.file('images')
@@ -44,7 +44,7 @@ class PostsController {
         }
       }
 
-      const post = new Post({ body, title, time, location })
+      const post = new Post({ body, title, time, location, featured: featured === 'true' ? 1 : 0 })
       yield post.save()
 
       yield post.images().createMany(dataFiles)
@@ -67,11 +67,12 @@ class PostsController {
 
     try {
       const post = yield Post.find(request.param('id'))
-
+     
       post.title = body.title
       post.body = body.body
       post.time = body.time || null
       post.location = body.location
+      post.featured = body.featured
 
       yield post.save()
 

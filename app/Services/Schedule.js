@@ -39,6 +39,7 @@ ScheduleService.getAvailableTime = function * (startAt, endAt, service, step = 3
 }
 
 ScheduleService.checkBarberAvailable = function * (time, services) {
+  console.log(services)
   return services.filter((el) => {
     const start = new Date(`${el.start_at}`)
     const end = new Date(`${el.end_at}`)

@@ -8,7 +8,7 @@ const Validator = use('Validator')
 const _ = use('lodash')
 
 class ScheduleController {
-  * today (request, response) {
+  * today(request, response) {
     const schedules = yield Schedule.query().with('barber', 'customer', 'service').fetch()
     const startAt = request.all().start_at
 
@@ -20,7 +20,7 @@ class ScheduleController {
     yield response.status(200).json({ error: true, dateSchedules })
   }
 
-  * index (request, response) {
+  * index(request, response) {
     const userId = Object.keys(request.only('user_id')).length > 0 ? request.only('user_id') : null
     const startAt = Object.keys(request.only('start_at')).length > 0 ? request.only('start_at').start_at : null
     const service = Object.keys(request.only('service')).length > 0 ? request.only('service').service : null
@@ -34,13 +34,13 @@ class ScheduleController {
         const schedule = yield scheduleSrv.getTodayServices(startAt, service)
 
         let timeRanges = yield branch.toJSON()[0].branchSchedule
-        .map(function * ({days, open_at, close_at}) {
-          return {
-            days,
-            hours: yield scheduleSrv.getAvailableTime(`${startAt} ${open_at}`, `${startAt} ${close_at}`, schedule)
-          }
-        })
-
+          .map(function* ({ days, open_at, close_at }) {
+            return {
+              days,
+              hours: yield scheduleSrv.getAvailableTime(`${startAt} ${open_at}`, `${startAt} ${close_at}`, schedule)
+            }
+          })
+          
         if (!isWeekend) {
           timeRanges = timeRanges.filter(el => el.days !== 'weekend_morning')
         } else {
@@ -58,7 +58,7 @@ class ScheduleController {
     }
   }
 
-  * store (request, response) {
+  * store(request, response) {
     const body = request.except('availables')
     const availables = request.only('availables')
     const validation = yield Validator.validate(request.all(), Schedule.rules, Schedule.messages)
@@ -97,22 +97,44 @@ class ScheduleController {
     }
   }
 
-  * update (request, response) {
-    const body = request.all()
+  * update(request, response) {
+    const body = request.except('availables')
+    const availables = request.only('availables')
     const schedule = yield Schedule.findBy('id', request.param('id'))
+
+    if (body.user_id === 'na') {
+      body.user_id = availables.availables[_.random(0, availables.length - 1)]
+    }
 
     if (!schedule) {
       yield response.status(404).json({ error: true, message: 'El recurso que quiere actualizar no existe' })
     }
 
     try {
+      const existTurn = yield Schedule.query()
+        .where('start_at', body.start_at)
+        .where('customer_id', body.customer_id)
+        .fetch()
+
       const validation = yield Validator.validate(request.all(), Schedule.rules, Schedule.messages)
+
+      if (existTurn.toJSON().length > 0) {
+        yield response.status(422).json({ error: true, message: existTurn })
+        return
+      }
 
       if (validation.fails()) {
         response.status(422).json({ error: true, message: validation.messages() })
         return
       }
 
+      if (body.service_id === 3) {
+        body.end_at = moment(body.start_at).add(60, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+      } else {
+        body.end_at = moment(body.start_at).add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss')
+      }
+
+      schedule.end_at =  body.end_at
       schedule.start_at = body.start_at
       schedule.service_id = body.service_id
       schedule.user_id = body.user_id
@@ -125,7 +147,7 @@ class ScheduleController {
     }
   }
 
-  * delete (request, response) {
+  * delete(request, response) {
     try {
       const schedule = yield Schedule.findBy('id', request.param('id'))
 
@@ -140,7 +162,7 @@ class ScheduleController {
     }
   }
 
-  * status (request, response) {
+  * status(request, response) {
     const schedule = yield Schedule.findBy('id', request.param('id'))
 
     if (!schedule) {
