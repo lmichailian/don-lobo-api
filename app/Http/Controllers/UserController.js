@@ -41,6 +41,8 @@ class UserController {
       const userData = yield User.query()
         .with('roles', 'ranges', 'customer')
         .with('customer.turns')
+        .with('customer.turns.service')
+        .with('customer.turns.barber')
         .where('id', user.id).first()
       yield response.status(200).json({ error: false, user: userData })
     } catch (e) {
