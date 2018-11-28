@@ -15,6 +15,10 @@ class Customer extends Lucid {
       .orderBy('created_at', 'ASC')
   }
 
+  turns ()  {
+    return this.hasMany('App/Model/Schedule', 'id', 'customer_id')
+  }
+
   /**
    * Transaction customer by id.
    */

@@ -40,6 +40,7 @@ class UserController {
       const user = request.auth.user
       const userData = yield User.query()
         .with('roles', 'ranges', 'customer')
+        .with('customer.turns')
         .where('id', user.id).first()
       yield response.status(200).json({ error: false, user: userData })
     } catch (e) {
